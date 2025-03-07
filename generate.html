@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>توليد كود - موقع الربح الاحترافي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* إعادة تعيين الأنماط العامة */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1abc9c, #16a085);
+      direction: rtl;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    /* شريط تنقل مع 3 روابط بأسماء عشوائية */
+    nav {
+      width: 100%;
+      padding: 10px 20px;
+      background-color: rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+    }
+    nav ul li {
+      margin: 0 15px;
+    }
+    nav ul li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+    }
+    .container {
+      background: #fff;
+      max-width: 500px;
+      width: 100%;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: #333;
+    }
+    .code-display {
+      font-size: 26px;
+      font-weight: 700;
+      color: #27ae60;
+      background: #f1f3f5;
+      padding: 20px;
+      border-radius: 10px;
+      letter-spacing: 2px;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+    button {
+      background-color: #27ae60;
+      color: #fff;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background-color: #219150;
+      transform: scale(1.02);
+    }
+    .btn-group { display: flex; flex-direction: column; gap: 10px; }
+    .message {
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 8px;
+      display: none;
+      margin-top: 10px;
+    }
+    .message.success { background-color: #d4edda; color: #155724; }
+    .message.error { background-color: #f8d7da; color: #721c24; }
+    @media (max-width: 600px) {
+      .container { padding: 20px; }
+      h1 { font-size: 22px; }
+      .code-display { font-size: 24px; }
+      button { font-size: 16px; padding: 12px 25px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- شريط تنقل يحتوي على 3 روابط -->
+  <nav>
+    <ul>
+      <li><a href="#">Delta</a></li>
+      <li><a href="#">Epsilon</a></li>
+      <li><a href="#">Zeta</a></li>
+    </ul>
+  </nav>
+  <div class="container">
+    <h1>توليد كود الربح</h1>
+    <div class="code-display" id="codeDisplay">اضغط على الزر لتوليد كود</div>
+    <div class="btn-group">
+      <button id="generateBtn">توليد كود</button>
+      <button id="copyBtn" style="display: none;">نسخ الكود</button>
+      <!-- زر للتوجه إلى صفحة التحقق مع تمرير الكود كمعلمة -->
+      <button id="goToVerifyBtn" style="display: none;">الانتقال لصفحة التحقق</button>
+    </div>
+    <div class="message" id="copyFeedback"></div>
+  </div>
+  <script>
+    // دالة لتوليد كود عشوائي بطول عشوائي من 8 إلى 16 حرفاً
+    function generateRandomCode() {
+      const length = Math.floor(Math.random() * (16 - 8 + 1)) + 8;
+      let result = '';
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+      }
+      return result;
+    }
+    const codeDisplay = document.getElementById("codeDisplay");
+    const generateBtn = document.getElementById("generateBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const goToVerifyBtn = document.getElementById("goToVerifyBtn");
+    const copyFeedback = document.getElementById("copyFeedback");
+    
+    generateBtn.addEventListener("click", function() {
+      const newCode = generateRandomCode();
+      codeDisplay.innerText = newCode;
+      // إظهار أزرار النسخ والانتقال بعد توليد الكود
+      copyBtn.style.display = "block";
+      goToVerifyBtn.style.display = "block";
+      // إعداد زر الانتقال إلى صفحة التحقق مع تمرير الكود كمعلمة
+      goToVerifyBtn.onclick = function() {
+        window.location.href = "index.html?generatedCode=" + newCode;
+      };
+    });
+    
+    copyBtn.addEventListener("click", function() {
+      const codeText = codeDisplay.innerText;
+      navigator.clipboard.writeText(codeText).then(() => {
+        copyFeedback.innerText = "تم نسخ الكود بنجاح!";
+        copyFeedback.className = "message success";
+        copyFeedback.style.display = "block";
+      }).catch(() => {
+        copyFeedback.innerText = "فشل نسخ الكود، حاول مرة أخرى.";
+        copyFeedback.className = "message error";
+        copyFeedback.style.display = "block";
+      });
+    });
+  </script>
+</body>
+</html>
