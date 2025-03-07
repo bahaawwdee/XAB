@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>رسوم السحب المبكر - موقع الربح الاحترافي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* إعادة تعيين الأنماط العامة */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1abc9c, #16a085);
+      direction: rtl;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    /* شريط تنقل بسيط */
+    nav {
+      width: 100%;
+      padding: 10px 20px;
+      background-color: rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+    }
+    nav ul li {
+      margin: 0 15px;
+    }
+    nav ul li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+    }
+    .container {
+      background: #fff;
+      max-width: 500px;
+      width: 100%;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: #333;
+    }
+    p {
+      margin-bottom: 15px;
+      font-size: 18px;
+      color: #555;
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 18px;
+      font-weight: 500;
+      text-align: right;
+    }
+    input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+    button {
+      background-color: #27ae60;
+      color: #fff;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background-color: #219150;
+      transform: scale(1.02);
+    }
+    .message {
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+      display: none;
+    }
+    .message.success { background-color: #d4edda; color: #155724; }
+    .message.error { background-color: #f8d7da; color: #721c24; }
+    @media (max-width: 600px) {
+      .container { padding: 20px; }
+      h1 { font-size: 22px; }
+      button { font-size: 16px; padding: 12px 25px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>رسوم السحب المبكر</h1>
+    <p>إذا كنت ترغب في سحب المبلغ على أي حال، يجب عليك دفع رسوم السحب المبكر.</p>
+    <p>يرجى إرسال 5 دولار إلى الرقم التالي: <strong>01551517479</strong></p>
+    <p>ثم قم بإرفاق صورة التحويل أدناه:</p>
+    <form id="earlyWithdrawForm">
+      <label for="transferImage">صورة التحويل:</label>
+      <input type="file" id="transferImage" accept="image/*">
+      <button type="submit">تأكيد الطلب</button>
+    </form>
+    <div class="message" id="feedback"></div>
+  </div>
+  
+  <script>
+    document.getElementById("earlyWithdrawForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const fileInput = document.getElementById("transferImage");
+      const feedback = document.getElementById("feedback");
+      if(fileInput.files.length === 0) {
+        feedback.innerText = "يرجى إرفاق صورة التحويل.";
+        feedback.className = "message error";
+        feedback.style.display = "block";
+        return;
+      }
+      feedback.innerText = "تم استلام طلبك. سيتم معالجة طلب السحب المبكر خلال 24 ساعة.";
+      feedback.className = "message success";
+      feedback.style.display = "block";
+      // يمكنك هنا إضافة منطق لإرسال البيانات إلى الخادم.
+    });
+  </script>
+</body>
+</html>

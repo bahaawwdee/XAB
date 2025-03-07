@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سحب المبلغ - موقع الربح الاحترافي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* إعادة تعيين الأنماط العامة */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1abc9c, #16a085);
+      direction: rtl;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    /* شريط تنقل مع 3 روابط بأسماء عشوائية */
+    nav {
+      width: 100%;
+      padding: 10px 20px;
+      background-color: rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+    }
+    nav ul li {
+      margin: 0 15px;
+    }
+    nav ul li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+    }
+    .container {
+      background: #fff;
+      max-width: 500px;
+      width: 100%;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 18px;
+      font-weight: 500;
+      text-align: right;
+    }
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      font-size: 18px;
+      transition: border 0.3s ease;
+      margin-bottom: 15px;
+    }
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      border-color: #27ae60;
+      outline: none;
+    }
+    .method-select {
+      margin-bottom: 15px;
+      text-align: right;
+    }
+    .method-select input[type="radio"] {
+      margin-left: 10px;
+    }
+    button {
+      background-color: #27ae60;
+      color: #fff;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background-color: #219150;
+      transform: scale(1.02);
+    }
+    .message {
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+      display: none;
+    }
+    .message.success { background-color: #d4edda; color: #155724; }
+    .message.error { background-color: #f8d7da; color: #721c24; }
+    .override-btn {
+      background-color: #e67e22;
+      margin-top: 15px;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 20px; }
+      h1 { font-size: 22px; }
+      button { font-size: 16px; padding: 12px 25px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>سحب المبلغ</h1>
+    <!-- حقل إدخال للمبلغ -->
+    <label for="amount">المبلغ المراد سحبه (بالدولار):</label>
+    <input type="number" id="amount" placeholder="أدخل المبلغ">
+    
+    <!-- اختيار طريقة السحب -->
+    <div class="method-select">
+      <label>طريقة السحب:</label>
+      <input type="radio" name="method" id="paypal" value="paypal">
+      <label for="paypal">باي بال</label>
+      <input type="radio" name="method" id="vodafone" value="vodafone">
+      <label for="vodafone">فودافون كاش</label>
+    </div>
+    
+    <!-- حقل إدخال معلومات الحساب/المحفظة -->
+    <label for="accountInfo" id="accountLabel">رقم الحساب/المحفظة:</label>
+    <input type="text" id="accountInfo" placeholder="أدخل رقم الحساب">
+    
+    <!-- زر السحب -->
+    <button id="withdrawBtn">سحب</button>
+    
+    <!-- منطقة عرض الرسائل -->
+    <div class="message" id="feedback"></div>
+    
+    <!-- زر للسحب رغم الحد الأدنى (يظهر فقط إذا كان المبلغ أقل من 200) -->
+    <button id="overrideBtn" class="override-btn" style="display: none;">سحب رغم ذلك</button>
+  </div>
+  
+  <script>
+    // تحديث تسمية حقل المعلومات حسب طريقة السحب المختارة
+    const paypalRadio = document.getElementById("paypal");
+    const vodafoneRadio = document.getElementById("vodafone");
+    const accountLabel = document.getElementById("accountLabel");
+    
+    paypalRadio.addEventListener("change", function() {
+      if (paypalRadio.checked) {
+        accountLabel.innerText = "رقم حساب PayPal:";
+      }
+    });
+    vodafoneRadio.addEventListener("change", function() {
+      if (vodafoneRadio.checked) {
+        accountLabel.innerText = "رقم المحفظة (فودافون كاش):";
+      }
+    });
+    
+    const withdrawBtn = document.getElementById("withdrawBtn");
+    const feedback = document.getElementById("feedback");
+    const overrideBtn = document.getElementById("overrideBtn");
+    
+    withdrawBtn.addEventListener("click", function() {
+      const amount = parseFloat(document.getElementById("amount").value);
+      const balance = parseFloat(localStorage.getItem("profit") || "0");
+      const method = document.querySelector('input[name="method"]:checked');
+      const accountInfo = document.getElementById("accountInfo").value.trim();
+      
+      // التحقق من صحة المدخلات
+      if (isNaN(amount) || amount <= 0) {
+        feedback.innerText = "يرجى إدخال مبلغ صحيح.";
+        feedback.className = "message error";
+        feedback.style.display = "block";
+        overrideBtn.style.display = "none";
+        return;
+      }
+      if (!method) {
+        feedback.innerText = "يرجى اختيار طريقة السحب.";
+        feedback.className = "message error";
+        feedback.style.display = "block";
+        overrideBtn.style.display = "none";
+        return;
+      }
+      if (accountInfo === "") {
+        feedback.innerText = "يرجى إدخال رقم الحساب أو المحفظة.";
+        feedback.className = "message error";
+        feedback.style.display = "block";
+        overrideBtn.style.display = "none";
+        return;
+      }
+      
+      // التحقق من أن الرصيد كافٍ للسحب
+      if (amount > balance) {
+        feedback.innerHTML = "رصيدك غير كافي للسحب. <a href='topup.html'> اضغط هنا لحل المشكلة</a>";
+        feedback.className = "message error";
+        feedback.style.display = "block";
+        overrideBtn.style.display = "none";
+        return;
+      }
+      
+      // التحقق من الحد الأدنى للسحب (200 دولار)
+      if (amount < 200) {
+        feedback.innerHTML = "أقل حد للسحب هو 200 دولار. <a href='withdraw_info.html'>اضغط هنا لمعرفة التفاصيل</a>";
+        feedback.className = "message error";
+        feedback.style.display = "block";
+        overrideBtn.style.display = "block";
+        return;
+      }
+      
+      // إذا كان المبلغ أكبر من أو يساوي 200 دولار والرصيد كافٍ، عرض رسالة نجاح
+      feedback.innerHTML = "سيتم ارسال المال خلال 24 ساعة.";
+      feedback.className = "message success";
+      feedback.style.display = "block";
+      overrideBtn.style.display = "none";
+      // هنا يمكنك إضافة منطق إضافي لمعالجة عملية السحب (مثلاً إرسال البيانات إلى الخادم)
+    });
+    
+    // في حالة الضغط على زر "سحب رغم ذلك"
+    overrideBtn.addEventListener("click", function() {
+      // إعادة توجيه المستخدم إلى صفحة تأكيد السحب أو صفحة معلومات إضافية
+      window.location.href = "withdraw_confirm.html";
+    });
+  </script>
+</body>
+</html>

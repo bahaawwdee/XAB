@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>التحقق من الكود - موقع الربح الاحترافي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* إعادة تعيين الأنماط العامة */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1abc9c, #16a085);
+      direction: rtl;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    /* شريط تنقل مع 3 روابط بأسماء عشوائية */
+    nav {
+      width: 100%;
+      padding: 10px 20px;
+      background-color: rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+    }
+    nav ul li {
+      margin: 0 15px;
+    }
+    nav ul li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+    }
+    .container {
+      background: #fff;
+      max-width: 500px;
+      width: 100%;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .profit-display {
+      font-size: 24px;
+      font-weight: 600;
+      color: #27ae60;
+      margin-bottom: 20px;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: #333;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      font-size: 18px;
+      transition: border 0.3s ease;
+      margin-bottom: 15px;
+    }
+    input[type="text"]:focus {
+      border-color: #27ae60;
+      outline: none;
+    }
+    button {
+      background-color: #27ae60;
+      color: #fff;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background-color: #219150;
+      transform: scale(1.02);
+    }
+    .smart-btn {
+      background: linear-gradient(45deg, #28a745, #218838);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    .smart-btn::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255,255,255,0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.4s ease, height 0.4s ease;
+    }
+    .smart-btn:hover::after {
+      width: 200%;
+      height: 200%;
+    }
+    .message {
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 8px;
+      display: none;
+      margin-top: 10px;
+    }
+    .message.success { background-color: #d4edda; color: #155724; }
+    .message.error { background-color: #f8d7da; color: #721c24; }
+    @media (max-width: 600px) {
+      .container { padding: 20px; }
+      .profit-display { font-size: 20px; }
+      button { font-size: 16px; padding: 12px 25px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- شريط تنقل يحتوي على 3 روابط -->
+  <nav>
+    <ul>
+      <li><a href="s7b.html">سحب</a></li>
+      <li><a href="rb7.html">كيف؟</a></li>
+      <li><a href="df.shtml">ايداع</a></li>
+    </ul>
+  </nav>
+  <div class="container">
+    <!-- عرض الرصيد الذي يتم حفظه باستخدام localStorage -->
+    <div class="profit-display">رصيدك: <span id="profitAmount">0.00</span> دولار</div>
+    <h1>التحقق من الكود</h1>
+    <input type="text" id="codeInput" placeholder="أدخل الكود هنا">
+    <button id="submitBtn">تحقق من الكود</button>
+    <div class="message" id="feedback"></div>
+    <!-- زر لتوجيه المستخدم إلى صفحة توليد الكود -->
+    <button class="smart-btn" id="redirectGenerateBtn">اذهب لتوليد الكود</button>
+  </div>
+  
+  <script>
+    // استرجاع قيمة الربح من localStorage
+    let profit = localStorage.getItem("profit") ? parseFloat(localStorage.getItem("profit")) : 0;
+    document.getElementById("profitAmount").innerText = profit.toFixed(2);
+
+    // استخراج الكود المُولد من معلمة الرابط
+    const params = new URLSearchParams(window.location.search);
+    const validCode = params.get('generatedCode');
+    
+    // استرجاع مصفوفة الأكواد المستخدمة
+    const usedCodes = JSON.parse(localStorage.getItem("usedCodes") || "[]");
+
+    const feedback = document.getElementById("feedback");
+    if (!validCode) {
+      feedback.innerText = "يرجى الحصول على الكود من صفحة التوليد.";
+      feedback.className = "message error";
+      feedback.style.display = "block";
+    }
+    
+    document.getElementById("submitBtn").addEventListener("click", function() {
+      const codeInput = document.getElementById("codeInput");
+      const userCode = codeInput.value.trim();
+      
+      // رفض إعادة استخدام نفس الكود
+      if (usedCodes.includes(userCode)) {
+        feedback.innerText = "احضر كود جديد.";
+        feedback.className = "message error";
+        feedback.style.display = "block";
+        return;
+      }
+      
+      if (userCode === "") {
+        feedback.innerText = "الرجاء إدخال الكود.";
+        feedback.className = "message error";
+        feedback.style.display = "block";
+        return;
+      }
+      
+      if (userCode === validCode && validCode != null) {
+        profit += 0.20;
+        localStorage.setItem("profit", profit);
+        usedCodes.push(userCode);
+        localStorage.setItem("usedCodes", JSON.stringify(usedCodes));
+        
+        feedback.innerText = "الكود صحيح! تمت زيادة رصيدك بمقدار 0.20 دولار.";
+        feedback.className = "message success";
+        feedback.style.display = "block";
+        codeInput.value = "";
+        setTimeout(() => {
+          location.reload();
+        }, 1500);
+      } else {
+        feedback.innerText = "الكود غير صحيح! الرجاء المحاولة مرة أخرى.";
+        feedback.className = "message error";
+        feedback.style.display = "block";
+      }
+    });
+    
+    document.getElementById("redirectGenerateBtn").addEventListener("click", function() {
+      window.location.href = "https://shrinkme.ink/cCMA5";
+    });
+  </script>
+</body>
+</html>

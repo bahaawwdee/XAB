@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إيداع وشحن - زيادة معدل الربح</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1abc9c, #16a085);
+      direction: rtl;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    nav {
+      width: 100%;
+      padding: 10px 20px;
+      background-color: rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+    }
+    nav ul li {
+      margin: 0 15px;
+    }
+    nav ul li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+    }
+    .container {
+      background: #fff;
+      max-width: 500px;
+      width: 100%;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: #333;
+    }
+    p {
+      margin-bottom: 15px;
+      font-size: 18px;
+      color: #555;
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 18px;
+      font-weight: 500;
+      text-align: right;
+    }
+    input[type="number"],
+    input[type="file"] {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      font-size: 18px;
+      transition: border 0.3s ease;
+      margin-bottom: 15px;
+    }
+    input[type="number"]:focus,
+    input[type="file"]:focus {
+      border-color: #27ae60;
+      outline: none;
+    }
+    .method-select {
+      margin-bottom: 15px;
+      text-align: right;
+    }
+    .method-select input[type="radio"] {
+      margin-left: 10px;
+    }
+    button {
+      background-color: #27ae60;
+      color: #fff;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background-color: #219150;
+      transform: scale(1.02);
+    }
+    .message {
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+      display: none;
+    }
+    .message.success { background-color: #d4edda; color: #155724; }
+    .message.error { background-color: #f8d7da; color: #721c24; }
+    @media (max-width: 600px) {
+      .container { padding: 20px; }
+      h1 { font-size: 22px; }
+      button { font-size: 16px; padding: 12px 25px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>إيداع وشحن لزيادة معدل الربح</h1>
+    <p>لكل زيادة بمقدار 300 جنيه، يزيد معدل الربح بمقدار 50 سنت. يبدأ معدل الربح عند 20 سنت.</p>
+    <label for="depositAmount">المبلغ (بالجنيه):</label>
+    <input type="number" id="depositAmount" placeholder="أدخل المبلغ (مضاعفات 300)">
+    <button id="calculateBtn">حساب معدل الربح الجديد</button>
+    <div class="message" id="profitDisplay"></div>
+    
+    <!-- اختيار طريقة الدفع -->
+    <label>طريقة الدفع:</label>
+    <div class="method-select">
+      <input type="radio" name="paymentMethod" id="vodafone" value="vodafone" checked>
+      <label for="vodafone">فودافون كاش</label>
+      <input type="radio" name="paymentMethod" id="paypal" value="paypal">
+      <label for="paypal">باي بال</label>
+    </div>
+    <!-- عرض التفاصيل بناءً على الاختيار -->
+    <p id="paymentDetails"></p>
+    
+    <label for="transferProof">إرفاق صورة التحويل:</label>
+    <input type="file" id="transferProof" accept="image/*">
+    <button id="submitDepositBtn">إرسال الطلب</button>
+    <div class="message" id="feedback"></div>
+  </div>
+  
+  <script>
+    // تحديث حساب معدل الربح
+    const depositAmountInput = document.getElementById("depositAmount");
+    const calculateBtn = document.getElementById("calculateBtn");
+    const profitDisplay = document.getElementById("profitDisplay");
+    const submitDepositBtn = document.getElementById("submitDepositBtn");
+    const feedback = document.getElementById("feedback");
+    
+    let calculatedProfitRate = 20; // تبدأ بـ 20 سنت
+    calculateBtn.addEventListener("click", function() {
+      const amount = parseFloat(depositAmountInput.value);
+      if (isNaN(amount) || amount <= 0) {
+        profitDisplay.innerText = "يرجى إدخال مبلغ صحيح.";
+        profitDisplay.className = "message error";
+        profitDisplay.style.display = "block";
+        return;
+      }
+      // التأكد من أن المبلغ من مضاعفات 300 جنيه
+      if (amount % 300 !== 0) {
+        profitDisplay.innerText = "يرجى إدخال مبلغ من مضاعفات 300 جنيه فقط.";
+        profitDisplay.className = "message error";
+        profitDisplay.style.display = "block";
+        return;
+      }
+      // لكل 300 جنيه تضاف 50 سنت إلى معدل الربح
+      calculatedProfitRate = 20 + (amount / 300) * 50;
+      if (calculatedProfitRate >= 100) {
+        let dollars = calculatedProfitRate / 100;
+        profitDisplay.innerText = "معدل الربح الجديد: " + dollars + " دولار";
+      } else {
+        profitDisplay.innerText = "معدل الربح الجديد: " + calculatedProfitRate + " سنت";
+      }
+      profitDisplay.className = "message success";
+      profitDisplay.style.display = "block";
+    });
+    
+    // تحديث تفاصيل الدفع بناءً على اختيار المستخدم
+    const paymentDetails = document.getElementById("paymentDetails");
+    function updatePaymentDetails() {
+      const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+      if(selectedMethod === "vodafone"){
+        paymentDetails.innerText = "رقم المحفظة: 01551517479";
+      } else if(selectedMethod === "paypal"){
+        paymentDetails.innerText = "سيتم توفيرها قريبا";
+      }
+    }
+    // استمع لتغيير اختيار طريقة الدفع
+    document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+      radio.addEventListener("change", updatePaymentDetails);
+    });
+    // تعيين القيمة الافتراضية
+    updatePaymentDetails();
+    
+    // التحقق وإرسال الطلب
+    submitDepositBtn.addEventListener("click", function() {
+      const amount = parseFloat(depositAmountInput.value);
+      const fileInput = document.getElementById("transferProof");
+      
+      if (isNaN(amount) || amount <= 0 || amount % 300 !== 0) {
+        feedback.innerText = "يرجى إدخال مبلغ صحيح من مضاعفات 300 جنيه.";
+        feedback.className = "message error";
+        feedback.style.display = "block";
+        return;
+      }
+      if(fileInput.files.length === 0) {
+        feedback.innerText = "يرجى إرفاق صورة التحويل.";
+        feedback.className = "message error";
+        feedback.style.display = "block";
+        return;
+      }
+      
+      // منطق إرسال بيانات الإيداع (يمكنك إضافة منطق إضافي هنا)
+      feedback.innerText = "تم إرسال طلب الإيداع والشحن. سيتم تحديث معدل الربح خلال 24 ساعة.";
+      feedback.className = "message success";
+      feedback.style.display = "block";
+    });
+  </script>
+</body>
+</html>
